@@ -1,13 +1,32 @@
-let students=[
-  { name: "Emily", average: 91.67 },
-  { name: "Daniel", average: 72.67 },
-  { name: "Sarah", average: 58.00 },
-  { name: "Alex", average: 85.00 }
-];
-let topStudents=[];
-for(let i=0;i<students.length;i++){
-  if(students[i].average>80){
-    topStudents.push(students[i].name)
+function analyzeCountries(data) {
+  const countries=[...data];
+  const totalCountries=countries.length;
+  const totalPopulation=countries.reduce((sum,c)=> sum +c.population,0);
+  const averagePopulation=Math.round(totalPopulation/totalCountries);
+  const top5MostPopulated=[...countries]
+  .sort((a,b)=> b.population-a.population)
+  .slice(0,5)
+  .map (c => c.name);
+  const populationByRegion=countries.reduce((acc,c)=>{
+    acc[c.region]=(acc[c.region]|| 0)+c.population;
+    return acc;
+  },{});
+  const highestDensityCountries=countries
+  .map(c => ({
+    name:c.name,
+    density:Math.round(c.population/c.area)
+  }))
+  .sort((a,b)=>b.density-a.density)
+  .slice(0,3);
+  const smallCountries=countries
+  .filter(c => c.area<500000)
+  .map(c =>c.name);
+  return{
+    totalCountries,
+    averagePopulation,
+    top5MostPopulated,
+    populationByRegion,
+    highestDensityCountries,
+    smallCountries
+  };
   }
-}
-console.log(topStudents)
