@@ -1,32 +1,18 @@
-function analyzeCountries(data) {
-  const countries=[...data];
-  const totalCountries=countries.length;
-  const totalPopulation=countries.reduce((sum,c)=> sum +c.population,0);
-  const averagePopulation=Math.round(totalPopulation/totalCountries);
-  const top5MostPopulated=[...countries]
-  .sort((a,b)=> b.population-a.population)
-  .slice(0,5)
-  .map (c => c.name);
-  const populationByRegion=countries.reduce((acc,c)=>{
-    acc[c.region]=(acc[c.region]|| 0)+c.population;
-    return acc;
-  },{});
-  const highestDensityCountries=countries
-  .map(c => ({
-    name:c.name,
-    density:Math.round(c.population/c.area)
-  }))
-  .sort((a,b)=>b.density-a.density)
-  .slice(0,3);
-  const smallCountries=countries
-  .filter(c => c.area<500000)
-  .map(c =>c.name);
-  return{
-    totalCountries,
-    averagePopulation,
-    top5MostPopulated,
-    populationByRegion,
-    highestDensityCountries,
-    smallCountries
-  };
-  }
+const movies = [
+  { title: "Inception", year: 2010, genre: "Sci-Fi", rating: 8.8, duration: 148 },
+  { title: "The Dark Knight", year: 2008, genre: "Action", rating: 9.0, duration: 152 },
+  { title: "Interstellar", year: 2014, genre: "Sci-Fi", rating: 8.6, duration: 169 },
+  { title: "Tenet", year: 2020, genre: "Sci-Fi", rating: 7.4, duration: 150 },
+  { title: "Dunkirk", year: 2017, genre: "War", rating: 7.9, duration: 106 },
+  { title: "The Prestige", year: 2006, genre: "Drama", rating: 8.5, duration: 130 },
+];
+const sortedTitles=movies.sort((a,b)=>b.rating-a.rating).map(m=>m.title);
+console.log("Sorted Titles:",sortedTitles);
+const sciFiMovies=movies.filter(m =>m.genre==="Sci-Fi");
+console.log("Sci-Fi Movies",sciFiMovies);
+const movieStrings=movies.map(m =>`${m.title}(${m.year})-${m.duration}mins`);
+console.log("Movies Strings:",movieStrings);
+const avgDuration=(movies.reduce((sum,m)=>sum+m.duration,0)/movies.length).toFixed(2);
+console.log("Average Duration:",avgDuration);
+const highestRated=movies.reduce((max,m)=> m.rating>max.rating?m:max).title;
+console.log("Highest Rated Movie:",highestRated)
