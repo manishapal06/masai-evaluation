@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required /><br />
+    <input type="password" id="password" placeholder="Password" required /><br />
+    <button type="submit">Login</button>
+  </form>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
+
+      firebase.database().ref("users").once("value", snapshot => {
+        let found = false;
+        snapshot.forEach(childSnapshot => {
+          let user = childSnapshot.val();
+          if (user.email === email && user.password === password) {
+            found = true;
+            localStorage.setItem("loggedIn", "true");
+            window.location.href = "dashboard.html";
+          }
+        });
+
+        if (!found) {
+          alert("Wrong credentials! Try again.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

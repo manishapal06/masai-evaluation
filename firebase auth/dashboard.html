@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h2>Dashboard</h2>
+  <div id="product-container"></div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    if (!localStorage.getItem("loggedIn")) {
+      window.location.href = "login.html";
+    }
+
+    fetch("https://fakestoreapi.com/products")
+      .then(res => res.json())
+      .then(data => {
+        let container = document.getElementById("product-container");
+        data.forEach(product => {
+          let div = document.createElement("div");
+          div.innerHTML = `
+            <h4>${product.title}</h4>
+            <img src="${product.image}" width="100" />
+            <p>Price: $${product.price}</p>
+          `;
+          container.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
