@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Record Management</title>
+  <style>
+    body {
+      font-family: cooper black, sans-serif;
+      margin: 30px;
+      background-color: #7ea5ed;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0c0b0b;
+    }
+
+    form, .controls, table {
+      background: rgb(171, 222, 243);
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 9px 8px rgba(20, 14, 14, 0.605);
+      border-radius: 10px;
+    }
+
+    input, button {
+      padding: 8px;
+      
+      margin: 5px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 160px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #0c0b0b;
+      text-align: center;
+    }
+
+    th {
+      background-color: #96faed;
+    }
+
+    .high-score {
+      background-color: #a2f1b5;
+    }
+
+    .stats {
+      text-align: right;
+      margin-top: 10px;
+      color: #121212;
+    }
+  </style>
+</head>
+<body>
+  <h1>Student Record Management</h1>
+
+  <form id="studentForm">
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="text" id="batch" placeholder="Batch" required />
+    <input type="number" id="age" placeholder="Age" required />
+    <input type="number" id="score" placeholder="Score (0–100)" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search by name..." />
+    <button onclick="sortByAge()">Sort by Age ↑</button>
+    <button onclick="sortByScore()">Sort by Score ↓</button>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Batch</th>
+        <th>Age</th>
+        <th>Score</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+
+    let students = [
+      { name: "Anjali Sharma", batch: "Web Dev", age: 21, score: 88 },
+      { name: "Rohit Verma", batch: "UI/UX", age: 23, score: 76 },
+      { name: "Simran Kaur", batch: "Frontend", age: 20, score: 92 },
+      { name: "Amit Mehta", batch: "Backend", age: 22, score: 67 },
+      { name: "Neha Patel", batch: "Fullstack", age: 24, score: 83 },
+    ];
+
+    let editIndex = -1;
+
+    const form = document.getElementById("studentForm");
+    const tableBody = document.querySelector("#studentTable tbody");
+    const searchInput = document.getElementById("search");
+    const statsDiv = document.getElementById("stats");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const batch = document.getElementById("batch").value.trim();
+      const age = parseInt(document.getElementById("age").value);
+      const score = parseFloat(document.getElementById("score").value);
+
+      if (!name || !batch || isNaN(age) || isNaN(score) || score < 0 || score > 100) {
+        alert("Please enter valid data.");
+        return;
+      }
+
+      const student = { name, batch, age, score };
+
+      if (editIndex === -1) {
+        students.push(student);
+      } else {
+        students[editIndex] = student;
+        editIndex = -1;
+      }
+
+      form.reset();
+      renderTable();
+    });
+
+    function renderTable() {
+      const filter = searchInput.value.toLowerCase();
+      const filteredStudents = students.filter(s => s.name.toLowerCase().includes(filter));
+      tableBody.innerHTML = "";
+
+      filteredStudents.forEach((student, index) => {
+        const row = document.createElement("tr");
+        if (student.score > 80) row.classList.add("high-score");
+
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.batch}</td>
+          <td>${student.age}</td>
+          <td>${student.score}</td>
+          <td>
+            <button onclick="editStudent(${index})">Edit</button>
+            <button onclick="deleteStudent(${index})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      updateStats(filteredStudents);
+    }
+
+    function editStudent(index) {
+      const s = students[index];
+      document.getElementById("name").value = s.name;
+      document.getElementById("batch").value = s.batch;
+      document.getElementById("age").value = s.age;
+      document.getElementById("score").value = s.score;
+      editIndex = index;
+    }
+
+    function deleteStudent(index) {
+      students.splice(index, 1);
+      renderTable();
+    }
+
+    function sortByAge() {
+      students.sort((a, b) => a.age - b.age);
+      renderTable();
+    }
+
+    function sortByScore() {
+      students.sort((a, b) => b.score - a.score);
+      renderTable();
+    }
+
+    searchInput.addEventListener("input", renderTable);
+
+    function updateStats(filteredList) {
+      const count = filteredList.length;
+      const avg = count === 0 ? 0 : (filteredList.reduce((sum, s) => sum + s.score, 0) / count).toFixed(2);
+      statsDiv.textContent = `Total Students: ${count} | Average Score: ${avg}`;
+    }
+    renderTable();
+  </script>
+</body>
+</html>

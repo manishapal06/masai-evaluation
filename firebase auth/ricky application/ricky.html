@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rick and Morty Wiki</title>
+  <style>
+    body {
+      font-family: cursive, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0a6f2;
+    }
+    header {
+      text-align: center;
+      background: #0e1015;
+      color: #61dafb;
+      padding: 1rem;
+    }
+    #characters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: rgb(234, 82, 206);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.737);
+      cursor: pointer;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .pagination {
+      text-align: center;
+      margin: 1rem;
+    }
+    .pagination button {
+      padding: 0.1rem 1rem;
+      margin: 0 0.8rem;
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 0rem;
+      background: #080a0d;
+      color: rgb(222, 35, 250);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rick and Morty Character Gallery</h1>
+  </header>
+  <main>
+    <div id="characters"></div>
+    <div class="pagination">
+      <button id="prev">Previous</button>
+      <button id="next">Next</button>
+    </div>
+  </main>
+  <footer>
+    <div id="clock"></div>
+  </footer>
+
+  <script>
+    let page = 1;
+
+    async function fetchCharacters(pageNum) {
+      const res = await fetch(`https://rickandmortyapi.com/api/character?page=${pageNum}`);
+      const data = await res.json();
+      const characters = data.results;
+
+      const container = document.getElementById("characters");
+      container.innerHTML = "";
+
+      characters.forEach((char) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${char.image}" alt="${char.name}" />
+          <h3>${char.name}</h3>
+          <p>Species: ${char.species}</p>
+          <p>Status: ${char.status}</p>
+        `;
+        card.onclick = () => {
+          window.open(`character.html?id=${char.id}`, '_blank');
+        };
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById("next").addEventListener("click", () => {
+      page++;
+      fetchCharacters(page);
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (page > 1) {
+        page--;
+        fetchCharacters(page);
+      }
+    });
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      const day = now.toLocaleDateString("en-US", { weekday: "long" });
+      const date = now.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+      document.getElementById("clock").textContent = `${time} ${day} ${date}`;
+    }
+
+    setInterval(updateClock, 1000);
+    fetchCharacters(page);
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,1 @@
+Debouncing- Debouncing is a technique used to limit the rate at which a function is executed.it ensures that the function runs only after a certain amount of time has passed since the last event call.
